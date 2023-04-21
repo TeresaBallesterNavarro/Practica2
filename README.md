@@ -1,1 +1,16 @@
-# Practica2
+# Practica2 - Puente de Ambite - Teresa Ballester Navarro
+
+En esta práctica de programación concurrente se nos plantea lo siguiente: " En un puente compartido por peatones y vehículos, sólo pueden pasar vehículos en una misma dirección de manera simultánea, es decir, cuando pasa un coche hacia el norte no puede pasar ningún peatón ni un coche hacia el sur (análogo para los coches hacia el sur). De la misma forma, cuando cruzan peatones no puede haber coches en ninguna dirección circulando. Sin embargo, sí pueden haber peatones circulando en cualquier dirección".
+
+Resolvemos el problema con Python paso a paso (haciendo uso de la biblioteca multiprocessing) :
+- Practica 2_1 : En esta práctica consideramos que sólo pueden circular coches y para ellos nos creamos dos variables compartidad : los coches que están cruzando el puente hacia el norte (cochesN) y los coches que se dirigen hacia el sur en ese momento(cochesS). La variable condición dónde se van a quedar 'en cola' los coches que no puedan cruzar, debido a que ya haya coches en otra dirección cruzando,es: puenteVacio. En todo momento, aseguramos la exclusión mutua con mutex. 
+
+- Práctica 2_1 con peatones : Realizamos lo mismo que en la práctica anterior, pero en este caso también hay peatones. Luego, añadimos una nueva variable compartida, peatones, la cual nos indica el  número de peatones cruzando en ese momento el puente. En este caso, no va a haber sólo una variable condición si no que, añadimos la variable condición pasoPeatones, donde se bloquearán aquellos peatones que estén esperando a cruzar el puente y no puedan. La variable que en la práctica anterior era puenteVacio, ahora es pasoCoches, donde se bloquearán los coches que no puedan cruzar el puente en ese momento. Hay dinamismo y ausencia de deadlocks pues las variables condicón se van notificando. Además, garantizamos la exclusión mutua gracias al mutex.
+
+En ambas prácticas se puede dar inanición, pues no se ha establecido ningún tipo de turno o condición para dar paso a unos o a otros. Por ello, planteamos nuestra última práctica.
+
+- Práctica 2_2 : Vamos a decidir a quién darle el turno de entrada al puente, establecemos un orden de acceso mediante la variable compartida : turn. En el caso en que la variable valga 0, no habrá nadie en el puente. En el caso en que valga 1, y además no haya ni coches hacia el sur ni peatones cruzando, entonces se cumple la condición asociada a la variable condición: pasoCoches_N. Si turn = 2, no hay peatones cruzando ni coches hacia el norte, entonces se cumple la condición para que los coches hacia el sur puedan cruzar, esta condición está asociada a la variable condición: pasoCoches_S. De manera análoga, la condicon para pasoPeatones, consiste en que no haya coches en el puente y turn = 3. Además, a la salida de los coches o los peatones se va cambiando el valor de la variable turn, de manera que se va dando paso al resto de coches o peatones esperando a cruzar. La exclusión mutua la seguimos garantizando con mutex. 
+
+Finalmente, en un pdf desarrollamos a papel las soluciones, estudiando la inanición, exclusión mutua, dinamismo y ausencia de deadlocks en cada programa. Además, de plantear el invariante del monitor.
+
+Observación : el código está también comentado y se explica al principio de cada práctica en qué consiste.
